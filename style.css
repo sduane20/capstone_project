@@ -51,7 +51,7 @@ footer{
 
 nav ul {
     display: flex;
-    gap: 5rem;
+    gap: 3rem;
 }
 
 nav ul li {
@@ -97,42 +97,22 @@ nav ul li a:hover {
     opacity: 1;
 }
 
-.allow-desc {
-    list-style-type: disc;
-}
-
 .about-container {
     display: flex;
-    margin: 1.5rem;
 }
 
-.introduction {
-    margin: 1.5rem;
+.about-container, .introduction, .vision, .the-problem, .features, .contact, .help {
+    display: flex;
+    margin: 1rem;
+    flex-direction: column;
+    gap: .5rem;
+    justify-content: center;
+    align-items: center;
 }
 
-.vision {
-    margin: 1.5rem;
-}
-
-.the-problem {
-    margin: 1.5rem;
-}
-
-.features {
-    margin: 1.5rem;
-}
-
-.contact {
-    margin: 1.5rem;
-}
-
-.help {
-    margin: 1.5rem;
-}
-
-.help-text {
+.introduction-text, .vision-text, .the-problem-text, .features-text, .contact-text, .help-text {
     font-size: 1.1rem;
-    margin-top: .5rem;
+    margin-top: .4rem;
 }
 
 #help_btn {
@@ -172,5 +152,18 @@ footer > span {
         "head"
         "content"
         "footer";
+    }
+
+    .introduction-text, .vision-text, .the-problem-text, .features-text, .contact-text, .help-text {
+        font-size: 1.3rem;
+        margin-top: .4rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    .feature ul li {
+        font-size: 1rem;
     }
 }
