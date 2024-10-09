@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap');
+
 * {
     padding: 0;
     margin: 0;
@@ -10,6 +12,7 @@ a {
 }
 
 body {
+    font-family: "Playfair";
     color: black;
     display: grid;
     grid-template-areas: 
@@ -76,6 +79,22 @@ nav ul li a:hover {
 
 #login_btn:hover {
     box-shadow: -5px 5px black;
+}
+
+.skip-to-main-content-link {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+    padding: 1em;
+    background-color: black;
+    color: #fefefe;
+    opacity: 0;
+}
+
+.skip-to-main-content-link:focus {
+    left: 50%;
+    transform: translate(-50%);
+    opacity: 1;
 }
 
 footer {
