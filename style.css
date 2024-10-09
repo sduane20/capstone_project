@@ -97,6 +97,63 @@ nav ul li a:hover {
     opacity: 1;
 }
 
+.allow-desc {
+    list-style-type: disc;
+}
+
+.about-container {
+    display: flex;
+    margin: 1.5rem;
+}
+
+.introduction {
+    margin: 1.5rem;
+}
+
+.vision {
+    margin: 1.5rem;
+}
+
+.the-problem {
+    margin: 1.5rem;
+}
+
+.features {
+    margin: 1.5rem;
+}
+
+.contact {
+    margin: 1.5rem;
+}
+
+.help {
+    margin: 1.5rem;
+}
+
+.help-text {
+    font-size: 1.1rem;
+    margin-top: .5rem;
+}
+
+#help_btn {
+    margin: auto 1rem;
+    padding: 15px 20px;
+    background-color: #003865;
+    font-size: 1em;
+    border-radius: .5rem;
+    font-weight: bold;
+}
+
+#help_btn a {
+    color: #fefefe;
+}
+
+#help_btn:hover {
+    box-shadow: -5px 5px black;
+}
+
+
+
 footer {
     display: grid;
     place-content: center;
