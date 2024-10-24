@@ -1,5 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap');
 
+/*Main Colors*/
+:root {
+    --delta-blue: #003865;
+    --second-blue: #70BFFF;
+    --third-blue: #D6EDFF;
+    --main-white: #fefefe;
+    --main-gray: #555555;
+    --main-black: #000000;
+    --google-blue: #4285F4;
+    --google-red: #DB4437;
+    --google-yellow: #F4B400;
+    --google-green: #0F9D58;
+}
+
+/*Display P3 Color, when supported*/
+@supports (color: color(display-p3 1 1 1)) {
+    :root {
+        --delta-blue: color(display-p3 0.000000 0.219608 0.396078 / 1.000000);
+        --second-blue: color(display-p3 0.439216 0.749020 1.000000 / 1.000000);
+        --third-blue: color(display-p3 0.839216 0.929412 1.000000 / 1.000000);
+        --main-white: color(display-p3 0.996078 0.996078 0.996078 / 1.000000);
+        --main-gray: color(display-p3 0.333333 0.333333 0.333333 / 1.000000);
+        --main-black: color(display-p3 0.000000 0.000000 0.000000 / 1.000000);
+        --google-blue: color(display-p3 0.258824 0.521569 0.956863 / 1.000000);
+        --google-red: color(display-p3 0.858824 0.266667 0.215686 / 1.000000);
+        --google-yellow: color(display-p3 0.956863 0.705882 0.000000 / 1.000000);
+        --google-green: color(display-p3 0.058824 0.615686 0.345098 / 1.000000);
+    }
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -12,7 +42,7 @@ a {
 }
 
 a:visited {
-    color: #fefefe;
+    color: var(--main-white);
 }
 
 body {
@@ -30,8 +60,8 @@ body {
 
 header {
     grid-area: head;
-    background: linear-gradient(135deg, #003865,#70BFFF);
-    color: #fefefe;
+    background: linear-gradient(135deg, var(--delta-blue),var(--second-blue));
+    color: var(--main-white);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -43,8 +73,8 @@ main {
 
 footer{
     grid-area: footer;
-    background: linear-gradient(135deg, #003865,#70BFFF);
-    color: #fefefe;
+    background: linear-gradient(135deg, var(--delta-blue),var(--second-blue));
+    color: var(--main-white);
 }
 
 #logo img {
@@ -63,20 +93,20 @@ nav ul li {
 }
 
 nav ul li a {
-    color: #fefefe;
+    color: var(--main-white);
     font-size: 1.3rem;
     font-weight: bold;
 }
 
 nav ul li a:hover {
-    border-bottom: 2px solid #fefefe;
+    border-bottom: 2px solid var(--main-white);
 }
 
 #login_btn {
     margin: auto 1rem;
     padding: 15px 20px;
-    background-color: #003865;
-    color: #003865;
+    background-color: var(--delta-blue);
+    color: var(--delta-blue);
     font-size: 1em;
     border-radius: .5rem;
     border: none;
@@ -92,7 +122,7 @@ nav ul li a:hover {
     z-index: 999;
     padding: 1em;
     background-color: black;
-    color: #fefefe;
+    color: var(--main-white);
     opacity: 0;
 }
 
@@ -123,14 +153,14 @@ nav ul li a:hover {
 #help_btn {
     margin: auto 1rem;
     padding: 15px 20px;
-    background-color: #003865;
+    background-color: var(--delta-blue);
     font-size: 1em;
     border-radius: .5rem;
     font-weight: bold;
 }
 
 #help_btn a {
-    color: #fefefe;
+    color: var(--main-white);
 }
 
 #help_btn:hover {

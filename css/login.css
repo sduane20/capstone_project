@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap');
+
+/*Main Colors*/
+:root {
+    --delta-blue: #003865;
+    --second-blue: #70BFFF;
+    --third-blue: #D6EDFF;
+    --main-white: #fefefe;
+    --main-gray: #555555;
+    --main-black: #000000;
+    --google-blue: #4285F4;
+    --google-red: #DB4437;
+    --google-yellow: #F4B400;
+    --google-green: #0F9D58;
+}
+
+/*Display P3 Color, when supported*/
+@supports (color: color(display-p3 1 1 1)) {
+    :root {
+        --delta-blue: color(display-p3 0.000000 0.219608 0.396078 / 1.000000);
+        --second-blue: color(display-p3 0.439216 0.749020 1.000000 / 1.000000);
+        --third-blue: color(display-p3 0.839216 0.929412 1.000000 / 1.000000);
+        --main-white: color(display-p3 0.996078 0.996078 0.996078 / 1.000000);
+        --main-gray: color(display-p3 0.333333 0.333333 0.333333 / 1.000000);
+        --main-black: color(display-p3 0.000000 0.000000 0.000000 / 1.000000);
+        --google-blue: color(display-p3 0.258824 0.521569 0.956863 / 1.000000);
+        --google-red: color(display-p3 0.858824 0.266667 0.215686 / 1.000000);
+        --google-yellow: color(display-p3 0.956863 0.705882 0.000000 / 1.000000);
+        --google-green: color(display-p3 0.058824 0.615686 0.345098 / 1.000000);
+    }
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, var(--delta-blue),var(--second-blue));
+    min-height: 100vh;
+    font-family: "Playfair";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--main-white)
+}
+
+form {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    gap: 15px;
+    max-width: 300px;
+    overflow: hidden;
+    animation: slideIn 1s;
+}
+
+.signIn {
+    height: auto;
+    width: 300px;
+}
+
+.signUp,.signIn {
+    display: none;
+}
+
+.active {
+    display: flex;
+    animation: slideIn 0.5s forwards;
+}
+
+.deactivate{
+    animation: slideOut 0.5s forwards;
+    display: flex;
+}
+
+@keyframes slideIn {
+    0%{
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    0%{
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100%{
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+}
+
+form h2 {
+    text-transform: uppercase;
+    font-size: 16px !important;
+    position: relative;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h2::after {
+    content: '';
+    width: 40px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--third-blue);
+    position: absolute;
+    left: 0px;
+    bottom: -8px;
+    animation: infMove 2s forwards infinite;
+}
+
+@keyframes infMove {
+                    
+    0%,
+    100% {
+        left: 0px;
+    }
+
+    50% {
+        left: 25px;
+    }
+}
+
+.social-login {
+    display: grid;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.social-btn{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    user-select: none;
+    transition: all .3s;
+}
+
+.google-btn {
+    background: var(--main-white);
+    color: var(--main-black);
+}
+
+.google-btn:hover {
+    background: linear-gradient(to right, var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green));
+    color: var(--main-white);
+}
+
+.apple-btn {
+    background: var(--main-gray);
+    color: var(--main-whitek);
+}
+
+.apple-btn:hover {
+    background: var(--main-black);
+}
+
+.social-login i {
+    margin-right: .5rem;
+    padding: .5rem 1rem;
+    font-size: 1rem;
+}
