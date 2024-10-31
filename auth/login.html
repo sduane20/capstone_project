@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In | Tranquil Thoughts</title>
     <script src="https://kit.fontawesome.com/e1dd270f5d.js" crossorigin="anonymous"></script>
-    <!-- Firebase App (required) -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
-    <!-- Firebase Auth (required for authentication) -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
+    <!-- Firebase App (required) and Firebase Auth (required for authentication) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/login.css">
 </head>
@@ -68,8 +67,7 @@
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        firebase.initializeApp(firebaseConfig);
 
         // Set up Google Auth provider
         const provider = new firebase.auth.GoogleAuthProvider();
@@ -85,7 +83,7 @@
             });
         });
 
-        // Sign Up button event listener (optional, if you want separate logic for sign-up)
+        // Sign Up button event listener
         document.getElementById('GoogleSignUp').addEventListener('click', () => {
             firebase.auth().signInWithPopup(provider)
             .then((result) => {
