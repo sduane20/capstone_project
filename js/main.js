@@ -93,3 +93,25 @@ document.getElementById('signInForm').addEventListener('submit', (e) => {
     });
 });*/
 
+const signUp = document.querySelector('.signUp');
+                const signIn = document.querySelector('.signIn');
+                
+                function showSignIn() {
+                    signUp.classList.remove('active');
+                    signUp.classList.add('deactivate');
+                
+                    setTimeout(() => {
+                        signUp.classList.remove('deactivate');
+                        signIn.classList.add('active');
+                    }, 300);
+                }
+                
+                function showSignUp() {
+                    signIn.classList.remove('active');
+                    signIn.classList.add('deactivate');
+                
+                    setTimeout(() => {
+                        signIn.classList.remove('deactivate');
+                        signUp.classList.add('active');
+                    }, 300);
+                }
