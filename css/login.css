@@ -177,3 +177,178 @@ h2::after {
     padding: .5rem 1rem;
     font-size: 1rem;
 }
+
+.form-separator {
+    text-align: center;
+    color: #cccccc;
+    position: relative;
+    width: 100%;
+}
+
+.form-separator::before,
+.form-separator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #cccccc;
+}
+
+.form-separator::before {
+    left: 0;
+}
+
+.form-separator::after {
+    right: 0;
+}
+
+.name {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+input {
+    border-radius: 5px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding: 10px;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+input::placeholder {
+    color: rgba(212, 212, 212, 0.7);
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 3px 5px 10px rgba(0, 191, 166, 0.4);
+    transform: translateY(-2.5px);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.forgot-password-link {
+    font-size: 13px;
+}
+
+.forgot-password-link a {
+    color: #fdfdfd;
+    text-decoration: none;
+}
+
+.forgot-password-link a:hover {
+    text-decoration: underline;
+}
+
+.switch {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.btn {
+    width: 100%;
+    height: 36px;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+    user-select: none;
+}
+
+.btn:hover,
+.social-btn:hover {
+    box-shadow: 4px 4px 10px rgba(0, 191, 166, 0.6);
+    transform: translateY(-3px);
+}
+
+.btn:active,
+.social-btn:active {
+    transform: translateY(0px);
+    box-shadow: none !important;
+}
+
+.in {
+    border: 1.5px solid white;
+}
+
+.in:hover,
+.google-btn:hover {
+    background-color: white;
+    color: black;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.6);
+}
+
+.up {
+    background-color: rgb(7, 206, 186);
+    color: rgb(255, 255, 255);
+}
+
+.up:hover {
+    background-color: aqua !important;
+}
+
+input,
+.btn,
+.social-btn,
+.forgot-password-link {
+    opacity: 0;
+    animation: fadeIn 0.4s forwards;
+}
+
+.google-btn {
+    animation-delay: 0.2s;
+}
+
+.facebook-btn {
+    animation-delay: 0.3s;
+}
+
+.forgot-password-link {
+    animation-delay: 0.6s;
+}
+
+input:nth-child(2),
+.name input:first-child {
+    animation-delay: 0.3s;
+}
+
+.name input:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+input:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+input:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+input:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
