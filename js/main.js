@@ -1,5 +1,5 @@
 "use strict";
-
+/*
 require('dotenv').config();
 
 // Firebase configuration
@@ -91,4 +91,5 @@ document.getElementById('signInForm').addEventListener('submit', (e) => {
     .catch((error) => {
         console.error('Error during email sign-in:', error);
     });
-});
+});*/
+
