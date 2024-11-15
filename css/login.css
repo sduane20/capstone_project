@@ -159,17 +159,9 @@ h2::after {
 }
 
 .google-btn:hover {
-    background: linear-gradient(to right, var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green));
-    color: var(--main-white);
-}
+   background: var(--main-gray);
+   color: var(--main-white);
 
-.apple-btn {
-    background: var(--main-gray);
-    color: var(--main-whitek);
-}
-
-.apple-btn:hover {
-    background: var(--main-black);
 }
 
 .social-login i {
@@ -232,19 +224,6 @@ input:focus {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.forgot-password-link {
-    font-size: 13px;
-}
-
-.forgot-password-link a {
-    color: #fdfdfd;
-    text-decoration: none;
-}
-
-.forgot-password-link a:hover {
-    text-decoration: underline;
-}
-
 .switch {
     display: flex;
     align-items: center;
@@ -283,23 +262,21 @@ input:focus {
 }
 
 .in {
-    border: 1.5px solid white;
+    border: 1.5px solid var(--main-white);
 }
 
 .in:hover,
-.google-btn:hover {
+.google-btn:hover,
+.up:hover {
     background-color: white;
     color: black;
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.6);
 }
 
 .up {
-    background-color: rgb(7, 206, 186);
-    color: rgb(255, 255, 255);
-}
-
-.up:hover {
-    background-color: aqua !important;
+    border: 1.5px solid var(--main-white);
+    background: transparent;
+    color: var(--main-white);
 }
 
 input,

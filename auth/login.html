@@ -6,8 +6,9 @@
     <title>Log In | Tranquil Thoughts</title>
     <script src="https://kit.fontawesome.com/e1dd270f5d.js" crossorigin="anonymous"></script>
     <!-- Firebase App (required) and Firebase Auth (required for authentication) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/login.css">
 </head>
@@ -17,9 +18,6 @@
         <div class="social-login">
             <a class="social-btn google-btn" id="GoogleSignUp">
                 <i class="fa-brands fa-google"></i>Sign up with Google
-            </a>
-            <a class="social-btn apple-btn" id="AppleSignUp">
-                <i class="fa-brands fa-apple"></i>Sign up with Apple
             </a>
         </div>
         <div class="form-separator">or</div>
@@ -41,9 +39,6 @@
             <a class="social-btn google-btn" id="GoogleSignIn">
                 <i class="fa-brands fa-google"></i>Sign in with Google
             </a>
-            <a class="social-btn apple-btn" id="AppleSignIn">
-                <i class="fa-brands fa-apple"></i>Sign in with Apple
-            </a>
         </div>
         <div class="form-separator">or</div>
         <input type="email" id="emailSignIn" placeholder="Email" required aria-label="Email">
@@ -56,6 +51,8 @@
 
     <script src="../js/main.js"></script>
     <script>
+
+        //Used Microsoft co-pilot to fix code for Firebase login. Using the firebase docs lead to many errors lol.
 
         // Firebase configuration
         const firebaseConfig = {
@@ -72,7 +69,6 @@
         
         // Set up Google and Apple Auth providers
         const googleProvider = new firebase.auth.GoogleAuthProvider();
-        const appleProvider = new firebase.auth.OAuthProvider('apple.com');
         
         // Google Sign-In event listener
         document.getElementById('GoogleSignIn').addEventListener('click', () => {
@@ -93,28 +89,6 @@
             })
             .catch((error) => {
                 console.error('Error during Google Sign-up:', error);
-            });
-        });
-        
-        // Apple Sign-In event listener
-        document.getElementById('AppleSignIn').addEventListener('click', () => {
-            firebase.auth().signInWithPopup(appleProvider)
-            .then((result) => {
-                window.location.href = '../src/dashboard.html';
-            })
-            .catch((error) => {
-                console.error('Error during Apple Sign-in:', error);
-            });
-        });
-        
-        // Apple Sign-Up event listener
-        document.getElementById('AppleSignUp').addEventListener('click', () => {
-            firebase.auth().signInWithPopup(appleProvider)
-            .then((result) => {
-                window.location.href = '../src/dashboard.html';
-            })
-            .catch((error) => {
-                console.error('Error during Apple Sign-up:', error);
             });
         });
         
