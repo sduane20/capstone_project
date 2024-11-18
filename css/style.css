@@ -311,14 +311,13 @@ footer > span {
     .hero-subtitle {
         font-size: 1.2rem;
     }
+
+    .hero-section {
+        margin: 1.5rem;
+    }
     
     .carousel-slide {
         height: 300px;
-    }
-
-    .function-card {
-        padding-left: 2rem;
-        padding-right: 2rem;
     }
 
     footer > span{
