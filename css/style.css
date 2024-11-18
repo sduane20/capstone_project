@@ -264,7 +264,7 @@ footer > span {
     margin-bottom: 1rem;
 }
 
-@media screen and (max-width: 530px){
+@media screen and (max-width: 768px){
     body {
         grid-template-rows: 125px 1fr 100px;
         grid-template-columns: 1fr;
@@ -302,6 +302,23 @@ footer > span {
         justify-content: center;
         align-items: center;
         text-align: center;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .carousel-slide {
+        height: 300px;
+    }
+
+    .function-card {
+        padding-left: 2rem;
+        padding-right: 2rem;
     }
 
     footer > span{
