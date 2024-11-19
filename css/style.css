@@ -67,6 +67,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 1rem;
 }
 
 main {
@@ -88,7 +89,7 @@ footer{
 
 nav ul {
     display: flex;
-    gap: 3rem;
+    gap: 2rem;
 }
 
 nav ul li {
@@ -562,13 +563,10 @@ footer > span {
 .user-controls {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-right: 1rem;
 }
 
 .welcome-message {
-    color: var(--main-white);
-    font-size: 1.1em;
+    font-size: 1.3em;
 }
 
 #userName {
@@ -657,4 +655,53 @@ footer > span {
 
 .error {
     color: #d32f2f;
+}
+
+/* Update responsive styles */
+@media screen and (max-width: 768px) {
+    header {
+        padding: 0.5rem;
+    }
+
+    nav ul {
+        gap: 1rem;
+    }
+
+    nav ul li a {
+        font-size: 1rem;
+    }
+
+    .user-controls {
+        margin-right: 0;
+    }
+
+    #auth_btn {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+
+    .dashboard-welcome {
+        padding: 0.8rem 1rem;
+    }
+
+    .welcome-message {
+        font-size: 1.1em;
+    }
+}
+
+/* Add dashboard welcome styles */
+.dashboard-welcome {
+    background: var(--delta-blue);
+    color: var(--main-white);
+    padding: 1rem 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.welcome-message {
+    font-size: 1.3em;
+}
+
+#userName {
+    font-weight: bold;
 }

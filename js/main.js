@@ -231,10 +231,7 @@ if (document.querySelector('#thoughtModal')) {
                 const userDoc = await db.collection('users').doc(user.uid).get();
                 if (userDoc.exists) {
                     const userData = userDoc.data();
-                    const welcomeMessage = document.createElement('span');
-                    welcomeMessage.className = 'welcome-message';
-                    welcomeMessage.innerHTML = `Welcome, <span id="userName">${userData.firstName}</span>`;
-                    signOutBtn.parentElement.insertBefore(welcomeMessage, signOutBtn);
+                    document.getElementById('userName').textContent = userData.firstName;
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
