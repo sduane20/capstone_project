@@ -82,83 +82,104 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
     };
 
     // Initialize Firebase
-    try {
+    if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
-        
-        // Set up Google provider with custom parameters
-        const googleProvider = new firebase.auth.GoogleAuthProvider();
-        googleProvider.setCustomParameters({
-            prompt: 'select_account'
-        });
+    }
 
-        // Google Auth Event Listeners
-        const googleSignInBtn = document.getElementById('GoogleSignIn');
-        const googleSignUpBtn = document.getElementById('GoogleSignUp');
+    // Set up Google provider
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+    googleProvider.addScope('profile');
+    googleProvider.addScope('email');
 
-        const handleGoogleAuth = async () => {
-            try {
-                const result = await firebase.auth().signInWithPopup(googleProvider);
-                console.log('Successfully authenticated:', result.user.email);
-                window.location.href = '../src/dashboard.html';
-            } catch (error) {
-                console.error('Authentication error:', error);
-                alert('Failed to authenticate with Google. Please try again.');
-            }
-        };
+    // Google Auth Event Listeners
+    const googleSignInBtn = document.getElementById('GoogleSignIn');
+    const googleSignUpBtn = document.getElementById('GoogleSignUp');
 
-        googleSignInBtn?.addEventListener('click', handleGoogleAuth);
-        googleSignUpBtn?.addEventListener('click', handleGoogleAuth);
-
-        // Email/Password Sign Up
-        const signUpForm = document.getElementById('signUpForm');
-        signUpForm?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('emailSignUp').value;
-            const password = document.getElementById('passwordSignUp').value;
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-
-            try {
-                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                // Add user details to Firestore
-                await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email,
+    const handleGoogleAuth = async () => {
+        try {
+            // Force account selection
+            googleProvider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            
+            const result = await firebase.auth().signInWithPopup(googleProvider);
+            const user = result.user;
+            
+            // Check if this is a new user
+            const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+            
+            if (!userDoc.exists) {
+                // Create user document for new users
+                await firebase.firestore().collection('users').doc(user.uid).set({
+                    firstName: user.displayName?.split(' ')[0] || '',
+                    lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+                    email: user.email,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                
-                window.location.href = '../src/dashboard.html';
-            } catch (error) {
-                console.error('Sign up error:', error);
+            }
+            
+            console.log('Successfully authenticated:', user.email);
+            window.location.href = '../src/dashboard.html';
+        } catch (error) {
+            console.error('Authentication error:', error);
+            alert('Failed to authenticate with Google. Please try again.');
+        }
+    };
+
+    googleSignInBtn?.addEventListener('click', handleGoogleAuth);
+    googleSignUpBtn?.addEventListener('click', handleGoogleAuth);
+
+    // Email/Password Sign Up
+    const signUpForm = document.getElementById('signUpForm');
+    signUpForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('emailSignUp').value;
+        const password = document.getElementById('passwordSignUp').value;
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+
+        try {
+            const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+            
+            // Add user details to Firestore
+            await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            window.location.href = '../src/dashboard.html';
+        } catch (error) {
+            console.error('Sign up error:', error);
+            alert(error.message);
+        }
+    });
+
+    // Email/Password Sign In
+    const signInForm = document.getElementById('signInForm');
+    signInForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('emailSignIn').value;
+        const password = document.getElementById('passwordSignIn').value;
+
+        try {
+            await firebase.auth().signInWithEmailAndPassword(email, password);
+            window.location.href = '../src/dashboard.html';
+        } catch (error) {
+            console.error('Sign in error:', error);
+            if (error.code === 'auth/invalid-credential') {
+                alert('Invalid email or password. Please try again.');
+            } else {
                 alert(error.message);
             }
-        });
-
-        // Email/Password Sign In
-        const signInForm = document.getElementById('signInForm');
-        signInForm?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('emailSignIn').value;
-            const password = document.getElementById('passwordSignIn').value;
-
-            try {
-                await firebase.auth().signInWithEmailAndPassword(email, password);
-                window.location.href = '../src/dashboard.html';
-            } catch (error) {
-                console.error('Sign in error:', error);
-                alert(error.message);
-            }
-        });
-
-    } catch (error) {
-        console.error('Firebase initialization error:', error);
-    }
+        }
+    });
 }
 
 // Dashboard functionality (only initialize if on dashboard page)
 if (document.querySelector('#thoughtModal')) {
-    // Firebase configuration - Move this inside the dashboard check
+    // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBd_Bf-a5g8sNBD0zUXF6XTOKt3n6XD4vw",
         authDomain: "tranquil-thoughts.firebaseapp.com",
@@ -173,6 +194,46 @@ if (document.querySelector('#thoughtModal')) {
         firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
+    let currentUser = null;
+
+    // Auth state listener
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUser = user;
+            const signOutBtn = document.getElementById('auth_btn');
+            signOutBtn.textContent = 'Sign Out';
+            
+            // Fetch and display user's name
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    const welcomeMessage = document.createElement('span');
+                    welcomeMessage.className = 'welcome-message';
+                    welcomeMessage.innerHTML = `Welcome, <span id="userName">${userData.firstName}</span>`;
+                    signOutBtn.parentElement.insertBefore(welcomeMessage, signOutBtn);
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+            
+            loadThoughts();
+        } else {
+            window.location.href = '../auth/login.html';
+        }
+    });
+
+    // Sign out functionality
+    const signOutBtn = document.getElementById('auth_btn');
+    signOutBtn.addEventListener('click', async () => {
+        try {
+            await firebase.auth().signOut();
+            window.location.href = '../index.html';
+        } catch (error) {
+            console.error('Error signing out:', error);
+            alert('Error signing out. Please try again.');
+        }
+    });
 
     // Update the loadThoughts function to include edit and delete functionality
     async function loadThoughts() {
@@ -392,6 +453,71 @@ if (document.querySelector('#thoughtModal')) {
     
     // Refresh quote every hour
     setInterval(fetchQuote, 3600000);
+
+    // Modal functionality
+    const modal = document.getElementById('thoughtModal');
+    const addBtn = document.getElementById('addThoughtBtn');
+    const closeBtn = document.getElementById('closeModal');
+    const moodButtons = document.querySelectorAll('.mood-btn');
+    const thoughtForm = document.getElementById('thoughtForm');
+    let selectedMood = '3'; // Default mood
+
+    // Add thought button click handler
+    addBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+        thoughtForm.reset();
+        moodButtons.forEach(btn => btn.classList.remove('selected'));
+    });
+
+    // Close button click handler
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Mood selection
+    moodButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            moodButtons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            selectedMood = button.dataset.mood;
+        });
+    });
+
+    // Form submission
+    thoughtForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('thoughtTitle').value;
+        const body = document.getElementById('thoughtBody').value;
+
+        try {
+            await db.collection('thoughts').add({
+                userId: currentUser.uid,
+                title: title,
+                body: body,
+                mood: selectedMood,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Clear form and close modal
+            thoughtForm.reset();
+            moodButtons.forEach(btn => btn.classList.remove('selected'));
+            selectedMood = '3'; // Reset selected mood
+            modal.style.display = 'none';
+
+            // Reload thoughts to show new entry
+            loadThoughts();
+        } catch (error) {
+            console.error('Error saving thought:', error);
+            alert('Error saving your thought. Please try again.');
+        }
+    });
 
     // ... rest of your dashboard code ...
 }
