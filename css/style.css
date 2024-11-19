@@ -324,3 +324,190 @@ footer > span {
         font-size: 1.3rem;
     }
 }
+
+/* Dashboard Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--main-white);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    z-index: 1000;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content {
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--main-gray);
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: var(--main-black);
+}
+
+.thought-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.thought-form textarea {
+    min-height: 200px;
+    resize: vertical;
+    padding: 12px;
+    font-family: inherit;
+    border: 1px solid var(--main-gray);
+    border-radius: 5px;
+}
+
+.thought-form input {
+    padding: 12px;
+    font-size: 1.1em;
+    border: 1px solid var(--main-gray);
+    border-radius: 5px;
+}
+
+.thought-form button[type="submit"] {
+    padding: 15px;
+    background-color: var(--delta-blue);
+    color: var(--main-white);
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.thought-form button[type="submit"]:hover {
+    background-color: var(--second-blue);
+}
+
+.mood-rating {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.mood-btn {
+    font-size: 32px;
+    background: none;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.3s ease;
+    opacity: 0.5;
+}
+
+.mood-btn:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.mood-btn.selected {
+    opacity: 1;
+    border-color: var(--delta-blue);
+    background-color: var(--third-blue);
+}
+
+.modal::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+.quote-container {
+    background-color: var(--third-blue);
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.quote-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.quote-author {
+    font-style: italic;
+    color: var(--main-gray);
+}
+
+.thoughts-container {
+    padding: 20px;
+    margin: 20px;
+}
+
+.thought-card {
+    background-color: var(--main-white);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.thought-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.thought-title {
+    font-size: 1.2em;
+    color: var(--delta-blue);
+    font-weight: bold;
+}
+
+.thought-date {
+    color: var(--main-gray);
+    font-size: 0.9em;
+}
+
+.thought-mood {
+    font-size: 1.5em;
+    margin-left: 10px;
+}
+
+.thought-content {
+    color: var(--main-black);
+    line-height: 1.5;
+}
+
+.no-thoughts {
+    text-align: center;
+    color: var(--main-gray);
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Responsive adjustments */
+@media screen and (min-width: 768px) {
+    .modal {
+        width: 80%;
+        max-width: 800px;
+    }
+}

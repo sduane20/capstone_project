@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tranquil Thoughts</title>
         <link rel="stylesheet" href="/css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
 <body>
     <a href="#main" class="skip-to-main-content-link">Skip to main content</a>
@@ -26,11 +28,7 @@
         </nav>
 
         <div>
-            <button id="auth_btn">
-                <a href="./auth/login.html">
-                    Login
-                </a>
-            </button>
+            <button id="auth_btn" onclick="window.location.href='auth/login.html'">Login</button>
         </div>
     </header>
     <main id="main">
@@ -82,7 +80,7 @@
         </section>
     </main>
     <footer>
-        <span>&copy; 2024 Thought Journal. All rights reserved.</span>
+        <span>&copy; 2024 Tranquil Thoughts. All rights reserved.</span>
     </footer>
     
     <script src="/js/main.js"></script>
