@@ -645,3 +645,16 @@ footer > span {
     color: var(--main-gray);
     margin: 5px 0;
 }
+
+/* Add these styles */
+.loading-thoughts,
+.error {
+    text-align: center;
+    color: var(--main-gray);
+    padding: 20px;
+    font-style: italic;
+}
+
+.error {
+    color: #d32f2f;
+}

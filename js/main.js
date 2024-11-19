@@ -82,8 +82,12 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
     };
 
     // Initialize Firebase
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+    } catch (error) {
+        console.error('Firebase initialization error:', error);
     }
 
     // Set up Google provider
@@ -139,6 +143,7 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
         const lastName = document.getElementById('lastName').value;
 
         try {
+            // Create user with email and password
             const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
             
             // Add user details to Firestore
@@ -148,11 +153,29 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
                 email: email,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            
+
+            console.log('User created successfully');
             window.location.href = '../src/dashboard.html';
         } catch (error) {
             console.error('Sign up error:', error);
-            alert(error.message);
+            let errorMessage = 'An error occurred during sign up.';
+            
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    errorMessage = 'This email is already registered. Please sign in or use a different email.';
+                    break;
+                case 'auth/invalid-email':
+                    errorMessage = 'Please enter a valid email address.';
+                    break;
+                case 'auth/operation-not-allowed':
+                    errorMessage = 'Email/password accounts are not enabled. Please contact support.';
+                    break;
+                case 'auth/weak-password':
+                    errorMessage = 'Please choose a stronger password (at least 6 characters).';
+                    break;
+            }
+            
+            alert(errorMessage);
         }
     });
 
@@ -235,15 +258,31 @@ if (document.querySelector('#thoughtModal')) {
         }
     });
 
-    // Update the loadThoughts function to include edit and delete functionality
+    // Update the loadThoughts function
     async function loadThoughts() {
         const thoughtsList = document.getElementById('thoughtsList');
+        const currentUser = firebase.auth().currentUser;
         
+        if (!currentUser) {
+            console.error('No authenticated user');
+            return;
+        }
+
         try {
+            // Show loading state
+            thoughtsList.innerHTML = '<p class="loading-thoughts">Loading your thoughts...</p>';
+
+            // Check if index exists before querying
             const snapshot = await db.collection('thoughts')
                 .where('userId', '==', currentUser.uid)
                 .orderBy('timestamp', 'desc')
-                .get();
+                .get()
+                .catch(error => {
+                    if (error.code === 'failed-precondition') {
+                        throw new Error('Database index is still building. Please try again in a few minutes.');
+                    }
+                    throw error;
+                });
 
             if (snapshot.empty) {
                 thoughtsList.innerHTML = '<p class="no-thoughts">No thoughts just yet</p>';
@@ -253,52 +292,44 @@ if (document.querySelector('#thoughtModal')) {
             thoughtsList.innerHTML = '';
             snapshot.forEach(doc => {
                 const thought = doc.data();
-                const date = thought.timestamp.toDate();
-                const formattedDate = new Intl.DateTimeFormat('en-US', {
+                const thoughtDate = thought.timestamp ? new Date(thought.timestamp.toDate()).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
-                }).format(date);
-
-                const moodEmoji = getMoodEmoji(thought.mood);
+                }) : 'Date not available';
                 
                 thoughtsList.innerHTML += `
-                    <div class="thought-card" data-id="${doc.id}">
+                    <div class="thought-card" onclick="viewThought('${doc.id}')">
                         <div class="thought-header">
-                            <span class="thought-title">${thought.title}</span>
+                            <h3 class="thought-title">${thought.title}</h3>
                             <div class="thought-actions">
-                                <button class="edit-btn" onclick="editThought('${doc.id}')">
+                                <button class="edit-btn" onclick="event.stopPropagation(); editThought('${doc.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="delete-btn" onclick="deleteThought('${doc.id}')">
+                                <button class="delete-btn" onclick="event.stopPropagation(); deleteThought('${doc.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="thought-meta">
-                            <span class="thought-date">${formattedDate}</span>
-                            <span class="thought-mood">${moodEmoji}</span>
+                            <span class="thought-date">${thoughtDate}</span>
+                            <span class="thought-mood">${getMoodEmoji(thought.mood)}</span>
                         </div>
-                        <p class="thought-preview">${thought.body.substring(0, 150)}${thought.body.length > 150 ? '...' : ''}</p>
-                        <button class="read-more-btn" onclick="viewThought('${doc.id}')">Read More</button>
+                        <div class="thought-preview">
+                            ${thought.body.substring(0, 150)}${thought.body.length > 150 ? '...' : ''}
+                        </div>
                     </div>
                 `;
             });
-
-            // Add click listeners to cards
-            document.querySelectorAll('.thought-card').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    // Prevent triggering when clicking buttons
-                    if (!e.target.closest('.thought-actions')) {
-                        viewThought(card.dataset.id);
-                    }
-                });
-            });
         } catch (error) {
             console.error('Error loading thoughts:', error);
-            thoughtsList.innerHTML = '<p class="no-thoughts">Error loading thoughts. Please try again later.</p>';
+            thoughtsList.innerHTML = `
+                <p class="error">
+                    ${error.message || 'Error loading thoughts. Please try again later.'}
+                </p>
+            `;
         }
     }
 
@@ -497,13 +528,24 @@ if (document.querySelector('#thoughtModal')) {
         const body = document.getElementById('thoughtBody').value;
 
         try {
-            await db.collection('thoughts').add({
-                userId: currentUser.uid,
+            // Check if user is authenticated
+            if (!firebase.auth().currentUser) {
+                throw new Error('User not authenticated');
+            }
+
+            // Create the thought document
+            const thoughtData = {
+                userId: firebase.auth().currentUser.uid,
                 title: title,
                 body: body,
                 mood: selectedMood,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Add to Firestore
+            await db.collection('thoughts').add(thoughtData);
+            console.log('Thought saved successfully');
 
             // Clear form and close modal
             thoughtForm.reset();
@@ -512,12 +554,25 @@ if (document.querySelector('#thoughtModal')) {
             modal.style.display = 'none';
 
             // Reload thoughts to show new entry
-            loadThoughts();
+            await loadThoughts();
         } catch (error) {
             console.error('Error saving thought:', error);
             alert('Error saving your thought. Please try again.');
         }
     });
 
-    // ... rest of your dashboard code ...
+    // Helper function to get mood emoji
+    function getMoodEmoji(mood) {
+        const moods = {
+            '1': '😢',
+            '2': '😕',
+            '3': '😐',
+            '4': '🙂',
+            '5': '😊'
+        };
+        return moods[mood] || '😐';
+    }
+
+    // Load thoughts when page loads
+    loadThoughts();
 }
