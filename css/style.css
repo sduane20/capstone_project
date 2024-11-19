@@ -511,3 +511,117 @@ footer > span {
         max-width: 800px;
     }
 }
+
+/* Update the add-thought-btn styles */
+.add-thought-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, var(--delta-blue), var(--second-blue));
+    color: var(--main-white);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 32px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 900;
+}
+
+.add-thought-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+/* Add these styles for the user controls */
+.user-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-right: 1rem;
+}
+
+.welcome-message {
+    color: var(--main-white);
+    font-size: 1.1em;
+}
+
+#userName {
+    font-weight: bold;
+}
+
+/* Add these styles for the thought cards */
+.thought-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.thought-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.thought-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.edit-btn:hover {
+    background-color: var(--third-blue);
+}
+
+.delete-btn:hover {
+    background-color: #ffebee;
+}
+
+.thought-preview {
+    margin: 10px 0;
+}
+
+.read-more-btn {
+    background: none;
+    border: none;
+    color: var(--delta-blue);
+    cursor: pointer;
+    padding: 5px 0;
+    font-size: 0.9em;
+}
+
+.read-more-btn:hover {
+    text-decoration: underline;
+}
+
+.view-thought {
+    padding: 30px;
+}
+
+.view-thought h2 {
+    margin-bottom: 15px;
+}
+
+.view-thought .thought-content {
+    white-space: pre-wrap;
+    margin-top: 20px;
+}
+
+.thought-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--main-gray);
+    margin: 5px 0;
+}

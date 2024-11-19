@@ -109,6 +109,48 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
         googleSignInBtn?.addEventListener('click', handleGoogleAuth);
         googleSignUpBtn?.addEventListener('click', handleGoogleAuth);
 
+        // Email/Password Sign Up
+        const signUpForm = document.getElementById('signUpForm');
+        signUpForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('emailSignUp').value;
+            const password = document.getElementById('passwordSignUp').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+
+            try {
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                // Add user details to Firestore
+                await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                window.location.href = '../src/dashboard.html';
+            } catch (error) {
+                console.error('Sign up error:', error);
+                alert(error.message);
+            }
+        });
+
+        // Email/Password Sign In
+        const signInForm = document.getElementById('signInForm');
+        signInForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('emailSignIn').value;
+            const password = document.getElementById('passwordSignIn').value;
+
+            try {
+                await firebase.auth().signInWithEmailAndPassword(email, password);
+                window.location.href = '../src/dashboard.html';
+            } catch (error) {
+                console.error('Sign in error:', error);
+                alert(error.message);
+            }
+        });
+
     } catch (error) {
         console.error('Firebase initialization error:', error);
     }
@@ -116,71 +158,23 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
 
 // Dashboard functionality (only initialize if on dashboard page)
 if (document.querySelector('#thoughtModal')) {
-    // Quote API
-    const fetchQuote = async () => {
-        try {
-            const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=inspirational', {
-                headers: {
-                    'X-Api-Key': 'wFN1moy4x9MmhU4iWjqWCA==jdTzKyOwCmZ5QhfV'  // Replace with your API key
-                }
-            });
-            const [data] = await response.json();
-            document.getElementById('quote-text').textContent = data.quote;
-            document.getElementById('quote-author').textContent = `- ${data.author}`;
-        } catch (error) {
-            console.error('Error fetching quote:', error);
-            document.getElementById('quote-text').textContent = 'Every day is a new beginning.';
-            document.getElementById('quote-author').textContent = '- Unknown';
-        }
+    // Firebase configuration - Move this inside the dashboard check
+    const firebaseConfig = {
+        apiKey: "AIzaSyBd_Bf-a5g8sNBD0zUXF6XTOKt3n6XD4vw",
+        authDomain: "tranquil-thoughts.firebaseapp.com",
+        projectId: "tranquil-thoughts",
+        storageBucket: "tranquil-thoughts.appspot.com",
+        messagingSenderId: "46951344026",
+        appId: "1:46951344026:web:d6c924c18c9b52f5ce7c23"
     };
 
-    // Modal functionality
-    const modal = document.getElementById('thoughtModal');
-    const addBtn = document.getElementById('addThoughtBtn');
-    const closeBtn = document.getElementById('closeModal');
-    const moodOptions = document.querySelectorAll('.mood-option');
-    const thoughtForm = document.getElementById('thoughtForm');
-
-    addBtn.onclick = () => modal.style.display = 'block';
-    closeBtn.onclick = () => modal.style.display = 'none';
-
-    // Close modal when clicking outside
-    window.onclick = (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    };
-
-    // Mood selection
-    const moodButtons = document.querySelectorAll('.mood-btn');
-    let selectedMood = '3'; // Default mood
-
-    moodButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove selected class from all buttons
-            moodButtons.forEach(btn => btn.classList.remove('selected'));
-            // Add selected class to clicked button
-            button.classList.add('selected');
-            // Update selected mood
-            selectedMood = button.dataset.mood;
-        });
-    });
-
-    // Initialize Firestore
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.firestore();
-    let currentUser = null;
 
-    // Check authentication state
-    firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-            currentUser = user;
-            loadThoughts();
-        } else {
-            window.location.href = '../auth/login.html';
-        }
-    });
-
-    // Load thoughts from Firestore
+    // Update the loadThoughts function to include edit and delete functionality
     async function loadThoughts() {
         const thoughtsList = document.getElementById('thoughtsList');
         
@@ -210,17 +204,36 @@ if (document.querySelector('#thoughtModal')) {
                 const moodEmoji = getMoodEmoji(thought.mood);
                 
                 thoughtsList.innerHTML += `
-                    <div class="thought-card">
+                    <div class="thought-card" data-id="${doc.id}">
                         <div class="thought-header">
                             <span class="thought-title">${thought.title}</span>
-                            <div>
-                                <span class="thought-date">${formattedDate}</span>
-                                <span class="thought-mood">${moodEmoji}</span>
+                            <div class="thought-actions">
+                                <button class="edit-btn" onclick="editThought('${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="delete-btn" onclick="deleteThought('${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
-                        <p class="thought-content">${thought.body}</p>
+                        <div class="thought-meta">
+                            <span class="thought-date">${formattedDate}</span>
+                            <span class="thought-mood">${moodEmoji}</span>
+                        </div>
+                        <p class="thought-preview">${thought.body.substring(0, 150)}${thought.body.length > 150 ? '...' : ''}</p>
+                        <button class="read-more-btn" onclick="viewThought('${doc.id}')">Read More</button>
                     </div>
                 `;
+            });
+
+            // Add click listeners to cards
+            document.querySelectorAll('.thought-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    // Prevent triggering when clicking buttons
+                    if (!e.target.closest('.thought-actions')) {
+                        viewThought(card.dataset.id);
+                    }
+                });
             });
         } catch (error) {
             console.error('Error loading thoughts:', error);
@@ -228,72 +241,157 @@ if (document.querySelector('#thoughtModal')) {
         }
     }
 
-    // Helper function to get mood emoji
-    function getMoodEmoji(mood) {
-        const moods = {
-            '1': '😢',
-            '2': '😕',
-            '3': '😐',
-            '4': '🙂',
-            '5': '😊'
-        };
-        return moods[mood] || '😐';
+    // View thought function
+    async function viewThought(thoughtId) {
+        try {
+            const doc = await db.collection('thoughts').doc(thoughtId).get();
+            if (!doc.exists) return;
+            
+            const thought = doc.data();
+            const date = thought.timestamp.toDate();
+            const formattedDate = new Intl.DateTimeFormat('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content view-thought">
+                    <span class="close-btn" onclick="modal.style.display='none'">&times;</span>
+                    <h2>${thought.title}</h2>
+                    <div class="thought-meta">
+                        <span class="thought-date">${formattedDate}</span>
+                        <span class="thought-mood">${getMoodEmoji(thought.mood)}</span>
+                    </div>
+                    <p class="thought-content">${thought.body}</p>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error viewing thought:', error);
+            alert('Error loading thought. Please try again.');
+        }
     }
 
-    // Update form submission
-    thoughtForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = document.getElementById('thoughtTitle').value;
-        const body = document.getElementById('thoughtBody').value;
-
+    // Edit thought function
+    async function editThought(thoughtId) {
         try {
-            await db.collection('thoughts').add({
-                userId: currentUser.uid,
-                title: title,
-                body: body,
-                mood: selectedMood, // Use the selectedMood variable
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            const doc = await db.collection('thoughts').doc(thoughtId).get();
+            if (!doc.exists) return;
+            
+            const thought = doc.data();
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-btn" onclick="modal.style.display='none'">&times;</span>
+                    <form class="thought-form" id="editThoughtForm">
+                        <h2>Edit Thought</h2>
+                        <input type="text" id="editTitle" value="${thought.title}" required>
+                        <textarea id="editBody" rows="5" required>${thought.body}</textarea>
+                        <div class="mood-rating">
+                            <button type="button" class="mood-btn ${thought.mood === '1' ? 'selected' : ''}" data-mood="1">😢</button>
+                            <button type="button" class="mood-btn ${thought.mood === '2' ? 'selected' : ''}" data-mood="2">😕</button>
+                            <button type="button" class="mood-btn ${thought.mood === '3' ? 'selected' : ''}" data-mood="3">😐</button>
+                            <button type="button" class="mood-btn ${thought.mood === '4' ? 'selected' : ''}" data-mood="4">🙂</button>
+                            <button type="button" class="mood-btn ${thought.mood === '5' ? 'selected' : ''}" data-mood="5">😊</button>
+                        </div>
+                        <button type="submit">Save Changes</button>
+                    </form>
+                </div>
+            `;
+
+            // Add mood selection listeners
+            const moodButtons = document.querySelectorAll('.mood-btn');
+            let selectedMood = thought.mood;
+            moodButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    moodButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+                    selectedMood = button.dataset.mood;
+                });
             });
 
-            // Clear form and close modal
-            thoughtForm.reset();
-            moodButtons.forEach(btn => btn.classList.remove('selected'));
-            selectedMood = '3'; // Reset selected mood
-            modal.style.display = 'none';
-
-            // Reload thoughts to show new entry
-            loadThoughts();
+            // Add form submission listener
+            document.getElementById('editThoughtForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    await db.collection('thoughts').doc(thoughtId).update({
+                        title: document.getElementById('editTitle').value,
+                        body: document.getElementById('editBody').value,
+                        mood: selectedMood,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    modal.style.display = 'none';
+                    loadThoughts();
+                } catch (error) {
+                    console.error('Error updating thought:', error);
+                    alert('Error updating thought. Please try again.');
+                }
+            });
         } catch (error) {
-            console.error('Error saving thought:', error);
-            alert('Error saving your thought. Please try again.');
+            console.error('Error editing thought:', error);
+            alert('Error loading thought for editing. Please try again.');
         }
-    });
+    }
 
-    // Fetch quote on page load
-    fetchQuote();
+    // Delete thought function
+    async function deleteThought(thoughtId) {
+        if (confirm('Are you sure you want to delete this thought?')) {
+            try {
+                await db.collection('thoughts').doc(thoughtId).delete();
+                loadThoughts();
+            } catch (error) {
+                console.error('Error deleting thought:', error);
+                alert('Error deleting thought. Please try again.');
+            }
+        }
+    }
 
-    // Sign out functionality
-    const signOutBtn = document.getElementById('auth_btn');
-    signOutBtn.addEventListener('click', async () => {
+    // Make functions globally available
+    window.viewThought = viewThought;
+    window.editThought = editThought;
+    window.deleteThought = deleteThought;
+
+    // Quote API functionality
+    const fetchQuote = async () => {
+        const quoteText = document.getElementById('quote-text');
+        const quoteAuthor = document.getElementById('quote-author');
+        
         try {
-            await firebase.auth().signOut();
-            console.log('User signed out successfully');
-            window.location.href = '../index.html';
+            const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=inspirational', {
+                headers: {
+                    'X-Api-Key': 'wFN1moy4x9MmhU4iWjqWCA==jdTzKyOwCmZ5QhfV',
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const [data] = await response.json();
+            
+            if (data && data.quote) {
+                quoteText.textContent = `"${data.quote}"`;
+                quoteAuthor.textContent = `- ${data.author}`;
+            } else {
+                throw new Error('Invalid quote data received');
+            }
         } catch (error) {
-            console.error('Error signing out:', error);
-            alert('Error signing out. Please try again.');
+            console.error('Error fetching quote:', error);
+            // Fallback quote in case of API failure
+            quoteText.textContent = '"Every moment is a fresh beginning."';
+            quoteAuthor.textContent = '- T.S. Eliot';
         }
-    });
+    };
 
-    // Update the auth state change listener to handle sign out
-    firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-            currentUser = user;
-            signOutBtn.textContent = 'Sign Out';
-            loadThoughts();
-        } else {
-            currentUser = null;
-            window.location.href = '../auth/login.html';
-        }
-    });
+    // Fetch quote immediately when page loads
+    fetchQuote();
+    
+    // Refresh quote every hour
+    setInterval(fetchQuote, 3600000);
+
+    // ... rest of your dashboard code ...
 }
