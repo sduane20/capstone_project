@@ -154,7 +154,7 @@ nav ul li a:hover {
     margin-top: .4rem;
 }
 
-#help_btn {
+.help_btn {
     margin: auto 1rem;
     padding: 15px 20px;
     background-color: var(--delta-blue);
@@ -164,11 +164,11 @@ nav ul li a:hover {
     border: none;
 }
 
-#help_btn a {
+.help_btn a {
     color: var(--main-white);
 }
 
-#help_btn:hover {
+.help_btn:hover {
     background: var(--main-gray);
 }
 
