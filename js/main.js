@@ -69,7 +69,7 @@ if (carousel && carouselDots) {
     }
 }
 
-// Firebase Authentication (only initialize if on auth pages)
+// Used Microsoft CoPilot and ChatGPT to helop with Firebase login information syntax
 if (document.querySelector('#signInForm') || document.querySelector('#signUpForm')) {
     // Firebase configuration
     const firebaseConfig = {
