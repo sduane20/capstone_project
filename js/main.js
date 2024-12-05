@@ -81,13 +81,7 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
         appId: "1:46951344026:web:d6c924c18c9b52f5ce7c23"
     };
 
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-    .then(() => { 
-        console.log("Persistence set to local"); 
-    }) 
-    .catch((error) => { 
-        console.error("Error setting persistence:", error); 
-    });
+
 
     // Initialize Firebase
     try {
