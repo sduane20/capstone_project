@@ -81,6 +81,14 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
         appId: "1:46951344026:web:d6c924c18c9b52f5ce7c23"
     };
 
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+    .then(() => { 
+        console.log("Persistence set to local"); 
+    }) 
+    .catch((error) => { 
+        console.error("Error setting persistence:", error); 
+    });
+
     // Initialize Firebase
     try {
         if (!firebase.apps.length) {
@@ -100,6 +108,7 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
     const googleSignUpBtn = document.getElementById('GoogleSignUp');
 
     const handleGoogleAuth = async () => {
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
         try {
             // Force account selection
             googleProvider.setCustomParameters({
@@ -144,6 +153,7 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
 
         try {
             // Create user with email and password
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
             const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
             
             // Add user details to Firestore
@@ -187,6 +197,7 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
         const password = document.getElementById('passwordSignIn').value;
 
         try {
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
             await firebase.auth().signInWithEmailAndPassword(email, password);
             window.location.href = '../src/dashboard.html';
         } catch (error) {
@@ -202,15 +213,6 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
 
 // Dashboard functionality (only initialize if on dashboard page)
 if (document.querySelector('#thoughtModal')) {
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyBd_Bf-a5g8sNBD0zUXF6XTOKt3n6XD4vw",
-        authDomain: "tranquil-thoughts.firebaseapp.com",
-        projectId: "tranquil-thoughts",
-        storageBucket: "tranquil-thoughts.appspot.com",
-        messagingSenderId: "46951344026",
-        appId: "1:46951344026:web:d6c924c18c9b52f5ce7c23"
-    };
 
     // Initialize Firebase
     if (!firebase.apps.length) {
