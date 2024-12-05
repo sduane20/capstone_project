@@ -82,7 +82,6 @@ if (document.querySelector('#signInForm') || document.querySelector('#signUpForm
     };
 
 
-
     // Initialize Firebase
     try {
         if (!firebase.apps.length) {
