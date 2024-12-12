@@ -25,3 +25,9 @@
     - A delete function to delete thoughts from the database
     - A edit function to edit thoughts in the database
     - Mobile responsiveness
+
+## What I would do differently
+
+    - I would honestly change this into a react page or maybe use next.js next time.
+    - I would do some cleaner code
+    - I would maybe like to do something associated with AWS Amplify and some Lambda functions
