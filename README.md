@@ -2,7 +2,7 @@
 
 ## To Access
 
-    - Visit [Tranquil Thoughts] (https://main.dhjkf4cyybbsd.amplifyapp.com)
+    Visit [Tranquil Thoughts] (https://main.dhjkf4cyybbsd.amplifyapp.com)
 
 ## Introduction
 
